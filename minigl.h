@@ -1,6 +1,5 @@
 /**
  * minigl.h
- * CS248 Assignment 1, Winter 2010
  * -------------------------------
  * This file defines the API to be implemented for MiniGL.
  */

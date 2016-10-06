@@ -49,7 +49,6 @@ void glRender()
 void Draw_Pixels()
 {
     // get the data from assignment
-    //MGLpixel white=0;MGL_SET_RED(white,255);MGL_SET_GREEN(white,255);MGL_SET_BLUE(white,255);
     MGLpixel pixel_data[WIDTH*HEIGHT];
     for(int i=0;i<WIDTH;i++)for(int j=0;j<HEIGHT;j++) pixel_data[j*WIDTH+i]=0;
 

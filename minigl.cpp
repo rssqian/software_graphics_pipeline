@@ -1,9 +1,4 @@
-/**
-	CS230
-	Wojciech Karas
-	HW1
-
-
+/*
  * minigl.cpp
  * -------------------------------
  * Implement miniGL here.
