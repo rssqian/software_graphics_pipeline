@@ -21,11 +21,9 @@
 #define QUAD 4
 #define DEG_TO_RAD 3.1415926/180.0
 
-
 using namespace std;
 
 //My own type definitions
-using namespace std;
 typedef vector < vector<MGLfloat> > twoDVector;
 
 
@@ -81,10 +79,8 @@ twoDVector createIdentity()
 	twoDVector tempIdentity;
 	vector<MGLfloat> oneDVector(MATRIX_DIM);
 
-	for(int i = 0; i < MATRIX_DIM; i++)
-	{
-		for(int j = 0; j < MATRIX_DIM; j++)
-		{
+	for(int i = 0; i < MATRIX_DIM; i++){
+		for(int j = 0; j < MATRIX_DIM; j++){
 			if( j == i)
 				oneDVector[j] = 1;
 			else
@@ -92,9 +88,7 @@ twoDVector createIdentity()
 		}
 		tempIdentity.push_back(oneDVector);
 	}
-
 	return tempIdentity;
-
 }
 
 //Barycentric coordinate formula
@@ -102,8 +96,6 @@ MGLfloat fBary(MGLfloat x, MGLfloat y, MGLfloat xa, MGLfloat xb, MGLfloat ya, MG
 {
 	return ((ya - yb)*x + (xb - xa)*y + xa*yb - xb*ya);
 }
-
-
 
 /**
  * Standard macro to report errors
@@ -135,8 +127,7 @@ void mglReadPixels(MGLsize width,
 	vector<MGLfloat> zBuffer (width*height, 1.0);
 
 	//Rasterize each polygon
-	while(!polygonList.empty())
-	{
+	while(!polygonList.empty()){
 		//Used to work on individual vertices of a polygon
 		vector<MGLfloat> vertex;
 		//Take the first polygon on the queue
@@ -152,8 +143,7 @@ void mglReadPixels(MGLsize width,
 		MGLfloat z[3];
 
 		//Get each vertex of the triangle
-		for(int i = 0; i < polygon.size(); i++)
-		{
+		for(int i = 0; i < polygon.size(); i++){
 			vertex = polygon[i];
 
 			//Normalize by w
@@ -172,11 +162,8 @@ void mglReadPixels(MGLsize width,
 		MGLfloat alpha, beta, gamma, cZ;
 
 		//Main loop to rasterize the triangle
-		for(int i = 0; i < width; i++)
-		{
-
-			for(int j = 0; j < height; j++)
-			{
+		for(int i = 0; i < width; i++){
+			for(int j = 0; j < height; j++){
 				//Calculate the barycentric coordinates
 				alpha = fBary(i, j, x[1], x[2], y[1], y[2])/fBary(x[0], y[0], x[1], x[2], y[1], y[2]);
 				beta = fBary(i, j, x[2], x[0], y[2], y[0])/fBary(x[1], y[1], x[2], x[0], y[2], y[0]);
@@ -201,16 +188,12 @@ void mglReadPixels(MGLsize width,
 						MGL_SET_BLUE(data[width*j + i] , colorCode[2]);
 
 					}
-					else
-						;//Not inside the polygon, skip pixel
+					else;//Not inside the polygon, skip pixel
 				}
-				else
-					;//skip pixel; outside triangle
+				else;//skip pixel; outside triangle
 			}
 		}
-
 	}
-
 }
 
 /**
@@ -222,9 +205,7 @@ void mglBegin(MGLpoly_mode mode)
 	//Check to see if mglBegin() has been called already
 	if(canDraw == true)
 		MGL_ERROR("Begin already specified");
-	else
-	{
-
+	else{
 		//Set to draw mode
 		canDraw = true;
 		//Set the polygon mode
@@ -237,7 +218,6 @@ void mglBegin(MGLpoly_mode mode)
 
 		//Reset number of specified vertices
 		vertices = 0;
-
 	}
 }
 
@@ -250,10 +230,8 @@ void mglEnd()
 	if(canDraw == false)
 		MGL_ERROR("Begin not yet specified");
 	//Stop input of vertices
-	else
-	{
+	else{
 		canDraw = false;
-	
 		//Gets rid of any prior vertices as they did not yet form a polygon
 		buildPolygon.clear();
 	}
@@ -284,10 +262,8 @@ void mglVertex2(MGLfloat x,
 
 	//modelview transform
 	MGLfloat temp = 0;
-	for(int i = 0; i < MATRIX_DIM; i++)
-	{
-		for(int j = 0; j < MATRIX_DIM; j++)
-		{
+	for(int i = 0; i < MATRIX_DIM; i++){
+		for(int j = 0; j < MATRIX_DIM; j++){
 			temp += (modelViewM[i][j] * coordinateVector[j]);
 		}
 		coordinateVector[i] = temp;
@@ -295,10 +271,8 @@ void mglVertex2(MGLfloat x,
 	}
 
 	//Projection transform
-	for(int i = 0; i < MATRIX_DIM; i++)
-	{
-		for(int j = 0; j < MATRIX_DIM; j++)
-		{
+	for(int i = 0; i < MATRIX_DIM; i++){
+		for(int j = 0; j < MATRIX_DIM; j++){
 			temp += (projectionM[i][j] * coordinateVector[j]);
 		}
 		coordinateVector[i] = temp;
@@ -314,17 +288,14 @@ void mglVertex2(MGLfloat x,
 
 	//Saves the transformed vertices into the not yet finished polygon
 	buildPolygon.push_back(coordinateVector);
-
 	vertices++;
 
 	//Checks to see if there are now enough vertices to create a polygon
 	//If yes, then push the polygon onto the polygon queue to render it
 	//Otherwise continue
-	if(vertices % currentMode == 0)
-	{
+	if(vertices % currentMode == 0){
 		//If quad, break up into two triangles
-		if(currentMode == QUAD)
-		{
+		if(currentMode == QUAD){
 			twoDVector triangleOne, triangleTwo;
 			
 				
@@ -344,8 +315,7 @@ void mglVertex2(MGLfloat x,
 			
 			
 		}
-		else
-		{
+		else{
 			polygonList.push(buildPolygon);
 			colorQueue.push(currentColor);
 		}
@@ -375,13 +345,10 @@ void mglVertex3(MGLfloat x,
 	coordinateVector[2] = z;
 	coordinateVector[3] = 1; 
 
-
 	//modelview transform
 	MGLfloat temp = 0;
-	for(int i = 0; i < MATRIX_DIM; i++)
-	{
-		for(int j = 0; j < MATRIX_DIM; j++)
-		{
+	for(int i = 0; i < MATRIX_DIM; i++){
+		for(int j = 0; j < MATRIX_DIM; j++){
 			temp += (modelViewM[i][j] * coordinateVector[j]);
 		}
 		coordinateVector[i] = temp;
@@ -389,10 +356,8 @@ void mglVertex3(MGLfloat x,
 	}
 
 	//Projection transform
-	for(int i = 0; i < MATRIX_DIM; i++)
-	{
-		for(int j = 0; j < MATRIX_DIM; j++)
-		{
+	for(int i = 0; i < MATRIX_DIM; i++){
+		for(int j = 0; j < MATRIX_DIM; j++){
 			temp += (projectionM[i][j] * coordinateVector[j]);
 		}
 		coordinateVector[i] = temp;
@@ -409,17 +374,14 @@ void mglVertex3(MGLfloat x,
 
 	//Saves the transformed vertices into the not yet finished polygon
 	buildPolygon.push_back(coordinateVector);
-
 	vertices++;
 
 	//Checks to see if there are now enough vertices to create a polygon
 	//If yes, then push the polygon onto the polygon queue to render it
 	//Otherwise continue
-	if(vertices % currentMode == 0)
-	{
+	if(vertices % currentMode == 0){
 		//If quad, break up into two triangles
-		if(currentMode == QUAD)
-		{
+		if(currentMode == QUAD){
 			twoDVector triangleOne, triangleTwo;
 			
 			triangleOne.push_back(buildPolygon[0]);
@@ -435,16 +397,12 @@ void mglVertex3(MGLfloat x,
 			
 			polygonList.push(triangleTwo);
 			colorQueue.push(currentColor);
-			
-			
 		}
-		else
-		{
+		else{
 			polygonList.push(buildPolygon);
 			colorQueue.push(currentColor);
 		}
 	}
-	
 }
 
 /**
@@ -466,13 +424,11 @@ void mglPushMatrix()
 {
 	//Test for current matrix mode and push the current matrix onto the corresponding
 	//matrix stack
-	if(matrixMode == MGL_MODELVIEW)
-	{
+	if(matrixMode == MGL_MODELVIEW){
 		modelViewStack.push(currentMatrix);
 		currentMatrix = modelViewStack.top();
 	}
-	else if(matrixMode == MGL_PROJECTION)
-	{
+	else if(matrixMode == MGL_PROJECTION){
 		projectionViewStack.push(currentMatrix);
 		currentMatrix = projectionViewStack.top();
 	}
@@ -489,14 +445,12 @@ void mglPopMatrix()
 	//Test for matrix mode and pop the matrix off the corresponding stack
 	//Only if it is not the sole matrix on the stack. There should always
 	//be an identity matrix at the bottom of the stack.
-	if(matrixMode == MGL_MODELVIEW)
-	{
+	if(matrixMode == MGL_MODELVIEW){
 		if(modelViewStack.size() > 1)
 			modelViewStack.pop();
 		currentMatrix = modelViewStack.top();
 	}
-	else if(matrixMode == MGL_PROJECTION)
-	{
+	else if(matrixMode == MGL_PROJECTION){
 		if(projectionViewStack.size() > 1)
 			projectionViewStack.pop();
 		currentMatrix = projectionViewStack.top();
@@ -535,23 +489,19 @@ void mglLoadIdentity()
 void mglLoadMatrix(const MGLfloat *matrix)
 {
 	//i is the row number and j is the column number
-	for(int j = 0; j < MATRIX_DIM; j++)
-	{
-		for(int i = 0; i < MATRIX_DIM; i++)
-		{
+	for(int j = 0; j < MATRIX_DIM; j++){
+		for(int i = 0; i < MATRIX_DIM; i++){
 			//j*MATRIX_DIM + i is the position in the 2D matrix if it were turned into a 1D vector
 			//For example: i = 3, j = 2 means (2*4 + 3) = 11
 			currentMatrix[i][j] = matrix[j*MATRIX_DIM + i];
 		}
 	}
 
-	if(matrixMode == MGL_MODELVIEW)
-	{
+	if(matrixMode == MGL_MODELVIEW){
 		modelViewStack.pop();
 		modelViewStack.push(currentMatrix);
 	}
-	else if(matrixMode == MGL_PROJECTION)
-	{
+	else if(matrixMode == MGL_PROJECTION){
 		projectionViewStack.pop();
 		projectionViewStack.push(currentMatrix);
 	}
@@ -577,10 +527,8 @@ void mglMultMatrix(const MGLfloat *matrix)
 	//Create a temporary matrix to hold the argument
 	twoDVector tempMatrix = createIdentity();
 	//i is the row number and j is the column number
-	for(int j = 0; j < MATRIX_DIM; j++)
-	{
-		for(int i = 0; i < MATRIX_DIM; i++)
-		{
+	for(int j = 0; j < MATRIX_DIM; j++){
+		for(int i = 0; i < MATRIX_DIM; i++){
 			//j*MATRIX_DIM + i is the position in the 2D matrix if it were turned into a 1D vector
 			//For example: i = 3, j = 2 means (2*4 + 3) = 11
 			tempMatrix[i][j] = matrix[j*MATRIX_DIM + i];
@@ -591,12 +539,9 @@ void mglMultMatrix(const MGLfloat *matrix)
 	MGLfloat temp = 0;
 
 	//Multiply the two matrices
-	for(int j = 0; j < MATRIX_DIM; j++)
-	{
-		for(int i = 0; i < MATRIX_DIM; i++)
-		{
-			for(int k = 0; k < MATRIX_DIM; k++)
-			{
+	for(int j = 0; j < MATRIX_DIM; j++){
+		for(int i = 0; i < MATRIX_DIM; i++){
+			for(int k = 0; k < MATRIX_DIM; k++){
 				temp += tempMatrix[i][k] * currentMatrix[k][j];
 			}
 			currentMatrix[i][j] = temp;
@@ -604,13 +549,11 @@ void mglMultMatrix(const MGLfloat *matrix)
 		}
 	}
 
-	if(matrixMode == MGL_MODELVIEW)
-	{
+	if(matrixMode == MGL_MODELVIEW){
 		modelViewStack.pop();
 		modelViewStack.push(currentMatrix);
 	}
-	else if(matrixMode == MGL_PROJECTION)
-	{
+	else if(matrixMode == MGL_PROJECTION){
 		projectionViewStack.pop();
 		projectionViewStack.push(currentMatrix);
 	}
@@ -637,16 +580,12 @@ void mglTranslate(MGLfloat x,
 	//Convert the matrix into a 1D array and send it to multiply the current matrix
 	MGLfloat oneDTranslation[MATRIX_DIM*MATRIX_DIM];
 
-	for(int j = 0; j < MATRIX_DIM; j++)
-	{
-		for(int i = 0; i < MATRIX_DIM; i++)
-		{
+	for(int j = 0; j < MATRIX_DIM; j++){
+		for(int i = 0; i < MATRIX_DIM; i++){
 			oneDTranslation[j*MATRIX_DIM + i] = translationMatrix[i][j];
 		}
 	}
-
 	mglMultMatrix(oneDTranslation);
-	
 }
 
 /**
@@ -679,14 +618,11 @@ void mglRotate(MGLfloat angle,
 	//Convert the matrix into a 1D array and send it to multiply the current matrix
 	MGLfloat oneDRotate[MATRIX_DIM*MATRIX_DIM];
 	
-	for(int j = 0; j < MATRIX_DIM; j++)
-	{
-		for(int i = 0; i < MATRIX_DIM; i++)
-		{
+	for(int j = 0; j < MATRIX_DIM; j++){
+		for(int i = 0; i < MATRIX_DIM; i++){
 			oneDRotate[j*MATRIX_DIM + i] = rotateMatrix[i][j];
 		}
 	}
-
 	mglMultMatrix(oneDRotate);
 }
 
@@ -708,10 +644,8 @@ void mglScale(MGLfloat x,
 	//Convert the matrix into a 1D array and send it to multiply the current matrix
 	MGLfloat oneDScale[MATRIX_DIM*MATRIX_DIM];
 
-	for(int j = 0; j < MATRIX_DIM; j++)
-	{
-		for(int i = 0; i < MATRIX_DIM; i++)
-		{
+	for(int j = 0; j < MATRIX_DIM; j++){
+		for(int i = 0; i < MATRIX_DIM; i++){
 			oneDScale[j*MATRIX_DIM + i] = scaleMatrix[i][j];
 		}
 	}
@@ -746,14 +680,11 @@ void mglFrustum(MGLfloat left,
 
 	MGLfloat oneDfrustum[MATRIX_DIM*MATRIX_DIM];
 
-	for(int j = 0; j < MATRIX_DIM; j++)
-	{
-		for(int i = 0; i < MATRIX_DIM; i++)
-		{
+	for(int j = 0; j < MATRIX_DIM; j++){
+		for(int i = 0; i < MATRIX_DIM; i++){
 			oneDfrustum[j*MATRIX_DIM + i] = frustumM[i][j];
 		}
 	}
-
 	mglMultMatrix(oneDfrustum);
 }
 
@@ -769,7 +700,6 @@ void mglOrtho(MGLfloat left,
               MGLfloat far)
 {
 	//Creation of the orthographic matrix for 4x4
-
 	twoDVector orthoM = createIdentity();
 
 	orthoM[0][0] = 2.0/(right - left);
@@ -780,19 +710,14 @@ void mglOrtho(MGLfloat left,
 	orthoM[2][3] = (far + near) / (near - far);
 
 	//Translate into 1D array and pass it to be multiplied
-
 	MGLfloat oneDOrtho[MATRIX_DIM*MATRIX_DIM];
 
-	for(int j = 0; j < MATRIX_DIM; j++)
-	{
-		for(int i = 0; i < MATRIX_DIM; i++)
-		{
+	for(int j = 0; j < MATRIX_DIM; j++){
+		for(int i = 0; i < MATRIX_DIM; i++){
 			oneDOrtho[j*MATRIX_DIM + i] = orthoM[i][j];
 		}
 	}
-
 	mglMultMatrix(oneDOrtho);
-
 }
 
 /**
@@ -804,19 +729,16 @@ void mglColor(MGLbyte red,
 {
 	//Special case in order to allow for else if statement
 	//This way color can be specified before mglBegin()
-	if(vertices == 0)
-	{
+	if(vertices == 0){
 		currentColor[0] = red;
 		currentColor[1] = green;
 		currentColor[2] = blue;
 	}
 	//Allows only change if a polygon hasn't been partially specified yet
-	else if(vertices % currentMode == 0)
-	{
+	else if(vertices % currentMode == 0){
 		currentColor[0] = red;
 		currentColor[1] = green;
 		currentColor[2] = blue;
 	}
-	else
-	;	//MGL_ERROR("Can't change color in the middle of specifying a polygon");
+	else;	//MGL_ERROR("Can't change color in the middle of specifying a polygon");
 }
